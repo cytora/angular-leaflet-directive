@@ -637,7 +637,7 @@ angular.module("leaflet-directive").directive('layers', ["$log", "$q", "leafletD
                 // Setup all baselayers definitions
                 var oneVisibleLayer = false;
                 for (var layerName in layers.baselayers) {
-                    var newBaseLayer = createLayer(layers.baselayers[layerName]);
+                    var newBaseLayer = createLayer(map, layers.baselayers[layerName]);
                     if (!isDefined(newBaseLayer)) {
                         delete layers.baselayers[layerName];
                         continue;
@@ -661,7 +661,7 @@ angular.module("leaflet-directive").directive('layers', ["$log", "$q", "leafletD
                     if(layers.overlays[layerName].type === 'cartodb') {
 
                     }
-                    var newOverlayLayer = createLayer(layers.overlays[layerName]);
+                    var newOverlayLayer = createLayer(map, layers.overlays[layerName]);
                     if (!isDefined(newOverlayLayer)) {
                         delete layers.overlays[layerName];
                         continue;
@@ -688,7 +688,7 @@ angular.module("leaflet-directive").directive('layers', ["$log", "$q", "leafletD
                     // add new layers
                     for (var newName in newBaseLayers) {
                         if (!isDefined(leafletLayers.baselayers[newName])) {
-                            var testBaseLayer = createLayer(newBaseLayers[newName]);
+                            var testBaseLayer = createLayer(map, newBaseLayers[newName]);
                             if (isDefined(testBaseLayer)) {
                                 leafletLayers.baselayers[newName] = testBaseLayer;
                                 // Only add the visible layer to the map
@@ -740,7 +740,7 @@ angular.module("leaflet-directive").directive('layers', ["$log", "$q", "leafletD
                     // add new overlays
                     for (var newName in newOverlayLayers) {
                         if (!isDefined(leafletLayers.overlays[newName])) {
-                            var testOverlayLayer = createLayer(newOverlayLayers[newName]);
+                            var testOverlayLayer = createLayer(map, newOverlayLayers[newName]);
                             if (isDefined(testOverlayLayer)) {
                                 leafletLayers.overlays[newName] = testOverlayLayer;
                                 if (newOverlayLayers[newName].visible === true) {
@@ -2518,8 +2518,8 @@ angular.module("leaflet-directive").factory('leafletLayerHelpers', ["$rootScope"
         },
         cartodb: {
             mustHaveUrl: true,
-            createLayer: function(params) {
-                return cartodb.createLayer(params.map, params.url);
+            createLayer: function(params, map) {
+                return cartodb.createLayer(map, params.url);
             }
         }
     };
@@ -2564,7 +2564,7 @@ angular.module("leaflet-directive").factory('leafletLayerHelpers', ["$rootScope"
         return true;
     }
 
-    function createLayer(layerDefinition) {
+    function createLayer(map, layerDefinition) {
         if (!isValidLayerType(layerDefinition)) {
             return;
         }
@@ -2599,7 +2599,7 @@ angular.module("leaflet-directive").factory('leafletLayerHelpers', ["$rootScope"
         };
 
         //TODO Add $watch to the layer properties
-        return layerTypes[layerDefinition.type].createLayer(params);
+        return layerTypes[layerDefinition.type].createLayer(params, map);
     }
 
     return {

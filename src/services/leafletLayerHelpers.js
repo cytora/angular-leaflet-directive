@@ -240,8 +240,8 @@ angular.module("leaflet-directive").factory('leafletLayerHelpers', function ($ro
         },
         cartodb: {
             mustHaveUrl: true,
-            createLayer: function(params) {
-                return cartodb.createLayer(params.map, params.url);
+            createLayer: function(params, map) {
+                return cartodb.createLayer(map, params.url);
             }
         }
     };
@@ -286,7 +286,7 @@ angular.module("leaflet-directive").factory('leafletLayerHelpers', function ($ro
         return true;
     }
 
-    function createLayer(layerDefinition) {
+    function createLayer(map, layerDefinition) {
         if (!isValidLayerType(layerDefinition)) {
             return;
         }
@@ -321,7 +321,7 @@ angular.module("leaflet-directive").factory('leafletLayerHelpers', function ($ro
         };
 
         //TODO Add $watch to the layer properties
-        return layerTypes[layerDefinition.type].createLayer(params);
+        return layerTypes[layerDefinition.type].createLayer(params, map);
     }
 
     return {
